@@ -52,15 +52,27 @@ router.post('/login', (req,res,next) => {
             if(!isValidPassword){
                 res.send('incorrect password')
             }
-            res.render('profile', {
-                username: foundUser.username
-            });
+            req.session.user = foundUser;
+
+            res.redirect('/main');
         })
         .catch(err => res.send(err))
 })
 
-router.get('/profile', isAuthenticated, (req,res,next) => {
-    res.render('profile')
+router.get('/main', isAuthenticated, (req,res,next) => {
+    if(req.session.user){
+        res.render('main')
+    } else {
+        res.redirect('/login')
+    }
+})
+
+router.get('/private', isAuthenticated, (req,res,next) => {
+    if(req.session.user){
+        res.render('private')
+    } else {
+        res.redirect('/login')
+    }
 })
 
 module.exports = router;
